@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from app import app
-from models import db, User
+from models import db, Post
 
 # Use test database and don't clutter tests with SQL
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly_test'
@@ -16,26 +16,28 @@ app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
 db.drop_all()
 db.create_all()
 
-class UserModelTestCase(TestCase):
+class PostModelTestCase(TestCase):
     """Tests for model for User."""
 
     def setUp(self):
         """Clean up any existing Users."""
 
-        User.query.delete()
+        Post.query.delete()
 
     def tearDown(self):
         """Clean up."""
 
         db.session.rollback()
 
-    def test_fullname(self):
-        # user = User(first_name="FirstName", last_name="LastName")
-        # self.assertEqual(user.full_name(),"FirstName LastName")
-        self.assertEqual(User.full_name(first_name="FirstName", last_name="LastName"), "FirstName LastName")
+    def test_friendly_date(self):
+        date = self.created_at.strftime("%a %b %-d  %Y, %-I:%M %p")
+        self.assertEquals(date.friendly_date(),"")
+
+
+# @property
+#     def friendly_date(self):
+#     """Return nicely-formatted date."""
+#     self.created_at.strftime("%a %b %-d  %Y, %-I:%M %p")
+
 
         
-
-
-
-      

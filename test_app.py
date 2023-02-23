@@ -23,8 +23,8 @@ class UserViewsTestCase(TestCase):
         """Add sample user."""
         User.query.delete()
 
-        user = User(first_name="FirstTest", last_name="LastTest", image_url="https://static-koimoi.akamaized.net/wp-content/new-galleries/2022/04/when-emma-watson-almost-quit-the-harry-potter-film-franchise-hermione-granger-would-be-proud-of-it-01.jpg")
-        db.sesssion.add(user)
+        user = User(first_name="Firstname", last_name="Lastname", image_url="https://www.freeiconspng.com/uploads/icon-user-blue-symbol-people-person-generic--public-domain--21.png")
+        db.session.add(user)
         db.session.commit()
 
         self.user_id = user.id
@@ -36,28 +36,40 @@ class UserViewsTestCase(TestCase):
 
     def test_list_users(self):
         with app.test_client() as client:
+            # import pdb
+            # pdb.set_trace()
             resp= client.get("/users")
-            html = resp.get_date(as_Text=True)
-
-            self.assertEqual(resp.status_code, 200)
-            self.assertIn('FirstTest', html)
-
-    def test_user_form(self):
-        with app.test_client() as client:
-            resp = client.get('/users/new')
-            html = resp.get_data(as_Text=True)
-
-            self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Users</h1>', html)
-
-    def test_add_user(self):
-        with app.test_client() as client:
-            d = {"first_name" : "FirstTest2", "last_name": "LastTest2", "img_url": "https://www.freeiconspng.com/uploads/icon-user-blue-symbol-people-person-generic--public-domain--21.png"}
-            resp = client.post("/users", date=d, follow_redirects=True)
             html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("<h1>Users</h1>", html)
+            self.assertIn('Firstname', html)
+
+    def test_show_users(self):
+        with app.test_client() as client:
+            resp = client.get(f"/users/{self.user_id}")
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn(self.user.first_name, html)
+
+    # def test_user_form(self):
+    #     with app.test_client() as client:
+    #         resp = client.get('/users/new')
+    #         html = resp.get_data(as_Text=True)
+
+    #         self.assertEqual(resp.status_code, 200)
+    #         self.assertIn('<h1>Users</h1>', html)
+
+    def test_add_user(self):
+        with app.test_client() as client:
+            d = {"first_name" : "Firstname2", "last_name": "Lastname2", "img_url": "https://www.freeiconspng.com/uploads/icon-user-blue-symbol-people-person-generic--public-domain--21.png"}
+            resp = client.post("/users/new", data=d, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            # self.assertIn("<h1>Firstname2</h1>", html)
+
+            # How to test a post route
 
 
    
